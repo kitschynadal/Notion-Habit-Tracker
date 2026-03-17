@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notion Style Heatmap Tracker</title>
+<style>
+  :root {
+    --bg-color: #ffffff;
+    --border-color: #e5e5e5;
+    --text-main: #37352f;
+    --text-muted: #787774;
+    --empty-cell: #f1f1f1;
+    
+    /* Habit Colors */
+    --color-orange: #e57a3c;
+    --color-orange-light: #fbe5d8;
+    
+    --color-green: #448361;
+    --color-green-light: #dceddd;
+    
+    --color-purple: #9065b0;
+    --color-purple-light: #ede2fe;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif;
+    background-color: transparent;
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    margin: 0;
+  }
+
+  .habit-card {
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 16px;
+    width: 320px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+
+  .habit-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 4px;
+    font-size: 14px;
+  }
+
+  .habit-desc {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+
+  .heatmap-container {
+    display: flex;
+    gap: 8px;
+  }
+
+  .days-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: var(--text-muted);
+    font-size: 10px;
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
+
+  .days-label div {
+    height: 12px;
+    line-height: 12px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-rows: repeat(7, 12px);
+    grid-auto-flow: column;
+    gap: 4px;
+  }
+
+  .cell {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    background-color: var(--empty-cell);
+  }
+
+  /* Specific Habit Styles */
+  .exercise .cell.active { background-color: var(--color-orange); }
+  .exercise .cell.light { background-color: var(--color-orange-light); }
+
+  .reading .cell.active { background-color: var(--color-green); }
+  .reading .cell.light { background-color: var(--color-green-light); }
+
+  .sleep .cell.active { background-color: var(--color-purple); }
+  .sleep .cell.light { background-color: var(--color-purple-light); }
+
+</style>
+</head>
+<body>
+
+  <div class="habit-card exercise">
+    <div class="habit-header">🏃 Exercise</div>
+    <div class="habit-desc">Run for at least 2.5 km</div>
+    <div class="heatmap-container">
+      <div class="days-label">
+        <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+      </div>
+      <div class="grid" id="grid-exercise"></div>
+    </div>
+  </div>
+
+  <div class="habit-card reading">
+    <div class="habit-header">📚 Reading</div>
+    <div class="habit-desc">Read 1 chapter of a book</div>
+    <div class="heatmap-container">
+      <div class="days-label">
+        <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+      </div>
+      <div class="grid" id="grid-reading"></div>
+    </div>
+  </div>
+
+  <div class="habit-card sleep">
+    <div class="habit-header">🛌 Sleep Early</div>
+    <div class="habit-desc">Sleep before 11:30pm</div>
+    <div class="heatmap-container">
+      <div class="days-label">
+        <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+      </div>
+      <div class="grid" id="grid-sleep"></div>
+    </div>
+  </div>
+
+<script>
+  // Configuration: 15 columns (weeks), 7 rows (days)
+  const columns = 15;
+  const rows = 7;
+
+  function generateGrid(containerId, activeProbability, lightProbability) {
+    const container = document.getElementById(containerId);
+    
+    // Generate cells column by column (to match CSS grid-auto-flow: column)
+    for (let col = 0; col < columns; col++) {
+      for (let row = 0; row < rows; row++) {
+        const cell = document.createElement('div');
+        cell.classList.add('cell');
+        
+        // Randomly assign states to mock the image data
+        const rand = Math.random();
+        if (rand < activeProbability) {
+          cell.classList.add('active');
+        } else if (rand < activeProbability + lightProbability) {
+          cell.classList.add('light');
+        }
+        
+        container.appendChild(cell);
+      }
+    }
+  }
+
+  // Generate grids with different densities to match the image
+  // Parameters: (id, probability of dark color, probability of light color)
+  generateGrid('grid-exercise', 0.3, 0.5); 
+  generateGrid('grid-reading', 0.2, 0.4);
+  generateGrid('grid-sleep', 0.25, 0.3);
+</script>
+
+</body>
+</html>
